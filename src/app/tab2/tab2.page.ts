@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import {
+  AlertController,
   IonButton,
   IonContent,
   IonHeader,
@@ -40,6 +41,9 @@ import { CounterService, SortOption } from '../services/counter.service';
 })
 export class Tab2Page implements OnInit {
   readonly counterService = inject(CounterService);
+  
+  private readonly alertController = inject(AlertController); // Inject AlertController for displaying confirmation dialogs
+  
 
   async ngOnInit(): Promise<void> {
     await this.counterService.initialize();
@@ -63,7 +67,26 @@ export class Tab2Page implements OnInit {
     await this.counterService.remove(id);
   }
 
+  //metoda pro vymazání celé historie počítadel s potvrzením uživatele
   async clear(): Promise<void> {
-    await this.counterService.clear();
+    const alert = await this.alertController.create({
+      header: 'Vymazat historii',
+      message: 'Opravdu chcete smazat celou historii počítadel? Tuto akci nelze vrátit.',
+      buttons: [
+        {
+          text: 'Zrušit',
+          role: 'cancel',
+        },
+        {
+          text: 'Smazat',
+          role: 'destructive',
+          handler: async () => {
+            await this.counterService.clear();
+          },
+        },
+      ],
+    });
+
+    await alert.present();
   }
 }
