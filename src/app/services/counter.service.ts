@@ -26,6 +26,24 @@ export class CounterService {
     this.countersState().reduce((sum, counter) => sum + counter.value, 0),
   );
 
+  //signál pro statistiku počítadel podle hodnoty, je odvozený z signálu countersState
+  readonly counterStats = computed(() => {
+    const counters = this.countersState();
+    return counters.reduce(
+      (acc, counter) => {
+        if (counter.value > 0) {
+          acc.positive++;
+        } else if (counter.value === 0) {
+          acc.zero++;
+        } else {
+          acc.negative++;
+        }
+        return acc;
+      },
+      { positive: 0, zero: 0, negative: 0 },
+    );
+  });
+
   //signál pro počet všech počítadel, je odvozený z signálu countersState
   readonly sortedCounters = computed(() => {
     const counters = [...this.countersState()];

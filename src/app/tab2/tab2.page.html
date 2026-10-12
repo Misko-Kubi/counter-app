@@ -18,6 +18,12 @@
         <!-- Zobrazení počtu záznamů a celkového součtu hodnot -->
         <p>Záznamů: {{ counterService.sortedCounters().length }} / {{ counterService.counters().length }}</p>
         <p>Celkový součet: {{ counterService.totalSum() }}</p>
+        <!-- Statistika počítadel podle hodnoty -->
+        <p class="stats-breakdown">
+          Kladné: {{ counterService.counterStats().positive }} | 
+          Nulové: {{ counterService.counterStats().zero }} | 
+          Záporné: {{ counterService.counterStats().negative }}
+        </p>
       </div>
       <ion-button color="danger" fill="outline" size="small" (click)="clear()">
         Vymazat vše
