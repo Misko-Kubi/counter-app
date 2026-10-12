@@ -14,7 +14,10 @@
     <p class="state-message">Historie je zatím prázdná.</p>
   } @else {
     <div class="history-header">
-      <p>Počet záznamů: {{ counterService.counters().length }}</p>
+      <div>
+        <p>Počet záznamů: {{ counterService.counters().length }}</p>
+      <p>Celkový součet: {{ counterService.totalSum() }}</p>
+      </div>
       <ion-button color="danger" fill="outline" size="small" (click)="clear()">
         Vymazat vše
       </ion-button>
