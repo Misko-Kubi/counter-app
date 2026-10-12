@@ -15,7 +15,8 @@
   } @else {
     <div class="history-header">
       <div>
-        <p>Počet záznamů: {{ counterService.counters().length }}</p>
+        <!-- Zobrazení počtu záznamů a celkového součtu hodnot -->
+        <p>Záznamů: {{ counterService.sortedCounters().length }} / {{ counterService.counters().length }}</p>
         <p>Celkový součet: {{ counterService.totalSum() }}</p>
       </div>
       <ion-button color="danger" fill="outline" size="small" (click)="clear()">
@@ -23,7 +24,17 @@
       </ion-button>
     </div>
 
-    
+    <!-- Vyhledávací pole pro filtrování záznamů podle názvu -->
+    <div class="search-container">
+      <ion-searchbar
+        placeholder="Hledat podle názvu..."
+        [value]="counterService.searchQuery()"
+        (ionInput)="onSearchInput($event)"
+        [debounce]="250"
+      ></ion-searchbar>
+    </div>
+
+    <!-- Select pro řazení záznamů -->
     <div class="sort-container">
       <ion-select
         label="Řadit podle"
@@ -34,13 +45,12 @@
       >
         <ion-select-option value="date-desc">Od nejnovějšího</ion-select-option>
         <ion-select-option value="date-asc">Od nejstaršího</ion-select-option>
-        <ion-select-option value="name-asc">Podle názvu (A-Z)</ion-select-option>
+        <ion-select-option value="name-asc">Podle názvu (A–Z)</ion-select-option>
         <ion-select-option value="value-desc">Podle hodnoty (největší)</ion-select-option>
       </ion-select>
     </div>
 
     <ion-list>
-      
       @for (counter of counterService.sortedCounters(); track counter.id) {
         <ion-item>
           <ion-label>
@@ -60,6 +70,9 @@
             Odstranit
           </ion-button>
         </ion-item>
+      } @empty {
+        <!-- Pokud není nalezen žádný záznam odpovídající hledání, zobrazíme zprávu -->
+        <p class="state-message">Žádná počítadla neodpovídají hledání.</p>
       }
     </ion-list>
   }

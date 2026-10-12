@@ -8,6 +8,7 @@ import {
   IonLabel,
   IonList,
   IonNote,
+  IonSearchbar,
   IonSelect,
   IonSelectOption,
   IonSpinner,
@@ -29,6 +30,7 @@ import { CounterService, SortOption } from '../services/counter.service';
     IonLabel,
     IonList,
     IonNote,
+    IonSearchbar,
     IonSelect,
     IonSelectOption,
     IonSpinner,
@@ -49,6 +51,12 @@ export class Tab2Page implements OnInit {
     if (value) {
       this.counterService.setSortOption(value);
     }
+  }
+
+  //metoda pro změnu aktuálního vyhledávacího dotazu
+  onSearchInput(event: any): void {
+    const query = event.detail.value ?? '';
+    this.counterService.setSearchQuery(query);
   }
 
   async remove(id: string): Promise<void> {

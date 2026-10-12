@@ -18,22 +18,32 @@ export class CounterService {
   //signál pro aktuální volbu řazení, výchozí hodnota je 'date-desc'
   readonly sortOption = signal<SortOption>('date-desc');
 
+  //signál pro aktuální vyhledávací dotaz, výchozí hodnota je prázdný řetězec
+  readonly searchQuery = signal<string>('');
+
   //signál pro celkový součet hodnot všech počítadel, je odvozený z signálu countersState
   readonly totalSum = computed(() =>
     this.countersState().reduce((sum, counter) => sum + counter.value, 0),
   );
 
-  //signál pro seřazený seznam počítadel podle aktuální volby řazení, je odvozený z signálu countersState a sortOption
+  //signál pro počet všech počítadel, je odvozený z signálu countersState
   readonly sortedCounters = computed(() => {
     const counters = [...this.countersState()];
     const option = this.sortOption();
+    const query = this.searchQuery().toLowerCase().trim();
 
-    return counters.sort((a, b) => {
+    //filtrování podle aktuálního vyhledávacího dotazu
+    const filtered = counters.filter((counter) =>
+      counter.name.toLowerCase().includes(query),
+    );
+
+    //seřazení podle aktuální volby řazení
+    return filtered.sort((a, b) => {
       switch (option) {
         case 'date-desc':
           return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         case 'date-asc':
-          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         case 'name-asc':
           return a.name.localeCompare(b.name, 'cs');
         case 'value-desc':
@@ -47,6 +57,11 @@ export class CounterService {
   //metoda pro nastavení aktuální volby řazení
   setSortOption(option: SortOption): void {
     this.sortOption.set(option);
+  }
+
+  //metoda pro nastavení aktuálního vyhledávacího dotazu
+  setSearchQuery(query: string): void {
+    this.searchQuery.set(query);
   }
 
   initialize(): Promise<void> {
