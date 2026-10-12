@@ -1,6 +1,7 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { Preferences } from '@capacitor/preferences';
 import { SavedCounter } from '../models/saved-counter';
+export type SortOption = 'date-desc' | 'date-asc' | 'name-asc' | 'value-desc';
 
 @Injectable({
   providedIn: 'root',
@@ -14,9 +15,39 @@ export class CounterService {
   readonly counters = this.countersState.asReadonly();
   readonly initialized = this.initializedState.asReadonly();
 
+  //signál pro aktuální volbu řazení, výchozí hodnota je 'date-desc'
+  readonly sortOption = signal<SortOption>('date-desc');
+
+  //signál pro celkový součet hodnot všech počítadel, je odvozený z signálu countersState
   readonly totalSum = computed(() =>
     this.countersState().reduce((sum, counter) => sum + counter.value, 0),
   );
+
+  //signál pro seřazený seznam počítadel podle aktuální volby řazení, je odvozený z signálu countersState a sortOption
+  readonly sortedCounters = computed(() => {
+    const counters = [...this.countersState()];
+    const option = this.sortOption();
+
+    return counters.sort((a, b) => {
+      switch (option) {
+        case 'date-desc':
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        case 'date-asc':
+          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        case 'name-asc':
+          return a.name.localeCompare(b.name, 'cs');
+        case 'value-desc':
+          return b.value - a.value;
+        default:
+          return 0;
+      }
+    });
+  });
+
+  //metoda pro nastavení aktuální volby řazení
+  setSortOption(option: SortOption): void {
+    this.sortOption.set(option);
+  }
 
   initialize(): Promise<void> {
     this.initializationPromise ??= this.load();

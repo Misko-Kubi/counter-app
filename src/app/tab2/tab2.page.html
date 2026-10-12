@@ -16,15 +16,32 @@
     <div class="history-header">
       <div>
         <p>Počet záznamů: {{ counterService.counters().length }}</p>
-      <p>Celkový součet: {{ counterService.totalSum() }}</p>
+        <p>Celkový součet: {{ counterService.totalSum() }}</p>
       </div>
       <ion-button color="danger" fill="outline" size="small" (click)="clear()">
         Vymazat vše
       </ion-button>
     </div>
 
+    
+    <div class="sort-container">
+      <ion-select
+        label="Řadit podle"
+        fill="outline"
+        interface="popover"
+        [value]="counterService.sortOption()"
+        (ionChange)="onSortChange($event)"
+      >
+        <ion-select-option value="date-desc">Od nejnovějšího</ion-select-option>
+        <ion-select-option value="date-asc">Od nejstaršího</ion-select-option>
+        <ion-select-option value="name-asc">Podle názvu (A-Z)</ion-select-option>
+        <ion-select-option value="value-desc">Podle hodnoty (největší)</ion-select-option>
+      </ion-select>
+    </div>
+
     <ion-list>
-      @for (counter of counterService.counters(); track counter.id) {
+      
+      @for (counter of counterService.sortedCounters(); track counter.id) {
         <ion-item>
           <ion-label>
             <h2>{{ counter.name }}</h2>
