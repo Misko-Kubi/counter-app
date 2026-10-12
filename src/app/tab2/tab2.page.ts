@@ -15,6 +15,7 @@ import {
   IonSpinner,
   IonTitle,
   IonToolbar,
+  ToastController,
 } from '@ionic/angular';
 import { CounterService, SortOption } from '../services/counter.service';
 
@@ -42,9 +43,10 @@ import { CounterService, SortOption } from '../services/counter.service';
 export class Tab2Page implements OnInit {
   readonly counterService = inject(CounterService);
   
-  private readonly alertController = inject(AlertController); // Inject AlertController for displaying confirmation dialogs
-  
+  private readonly alertController = inject(AlertController);
+  private readonly toastController = inject(ToastController);
 
+  
   async ngOnInit(): Promise<void> {
     await this.counterService.initialize();
   }
@@ -65,6 +67,15 @@ export class Tab2Page implements OnInit {
 
   async remove(id: string): Promise<void> {
     await this.counterService.remove(id);
+
+    // Zobrazíme toast zprávu o úspěšném odstranění záznamu
+    const toast = await this.toastController.create({
+      message: 'Záznam byl odstraněn.',
+      duration: 2000,
+      color: 'danger',
+      position: 'bottom',
+    });
+    await toast.present();
   }
 
   //metoda pro vymazání celé historie počítadel s potvrzením uživatele
@@ -82,6 +93,15 @@ export class Tab2Page implements OnInit {
           role: 'destructive',
           handler: async () => {
             await this.counterService.clear();
+
+            // Zobrazíme toast zprávu o úspěšném vymazání historie
+            const toast = await this.toastController.create({
+              message: 'Celá historie byla vymazána.',
+              duration: 2000,
+              color: 'danger',
+              position: 'bottom',
+            });
+            await toast.present();
           },
         },
       ],

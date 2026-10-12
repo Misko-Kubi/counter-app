@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
+import { IonContent, IonHeader, IonTitle, IonToolbar, ToastController } from '@ionic/angular';
 import { CounterComponent } from '../components/counter/counter.component';
 import { SavedCounter } from '../models/saved-counter';
 import { CounterService } from '../services/counter.service';
@@ -12,8 +12,18 @@ import { CounterService } from '../services/counter.service';
 })
 export class Tab1Page {
   private readonly counterService = inject(CounterService);
+  private readonly toastController = inject(ToastController);
 
   async onSaved(counter: SavedCounter): Promise<void> {
     await this.counterService.add(counter);
+
+    // Zobrazíme toast zprávu o úspěšném uložení počítadla
+    const toast = await this.toastController.create({
+      message: `Počítadlo „${counter.name}“ bylo úspěšně uloženo.`,
+      duration: 2000,
+      color: 'success',
+      position: 'bottom',
+    });
+    await toast.present();
   }
 }
